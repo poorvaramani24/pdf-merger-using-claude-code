@@ -5,7 +5,7 @@ import About from './pages/About';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/pdf-merger-using-claude-code">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
         <Navbar />
         <Routes>
