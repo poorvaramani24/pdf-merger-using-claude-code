@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { PDFDocument } from 'pdf-lib';
-import { Merge, Download, Loader2, ArrowRight, Sparkles } from 'lucide-react';
+import { Merge, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import DropZone from '../components/DropZone';
 import FileCard from '../components/FileCard';
 import PageSelector from '../components/PageSelector';
+import MergeCompleteModal from '../components/MergeCompleteModal';
 
 async function getPageCount(file) {
   const buf = await file.arrayBuffer();
@@ -112,116 +113,88 @@ export default function Home() {
 
       {/* Upload area */}
       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-6 sm:p-8">
-        {!mergedUrl ? (
-          <>
-            <div className="grid sm:grid-cols-[1fr_auto_1fr] gap-4 items-start">
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                  First PDF
-                </p>
-                {file1 ? (
-                  <>
-                    <FileCard file={file1} pageCount={pageCount1} onRemove={removeFile1} />
-                    {pageCount1 && (
-                      <PageSelector
-                        totalPages={pageCount1}
-                        selectedPages={selectedPages1}
-                        onChange={setSelectedPages1}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <DropZone
-                    label="Select first PDF"
-                    onFilesSelected={setFile1}
-                  />
-                )}
-              </div>
-
-              <div className="hidden sm:flex items-center justify-center pt-10">
-                <div className="bg-gray-100 p-2 rounded-full">
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                  Second PDF
-                </p>
-                {file2 ? (
-                  <>
-                    <FileCard file={file2} pageCount={pageCount2} onRemove={removeFile2} />
-                    {pageCount2 && (
-                      <PageSelector
-                        totalPages={pageCount2}
-                        selectedPages={selectedPages2}
-                        onChange={setSelectedPages2}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <DropZone
-                    label="Select second PDF"
-                    onFilesSelected={setFile2}
-                  />
-                )}
-              </div>
-            </div>
-
-            {error && (
-              <div className="mt-4 bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl">
-                {error}
-              </div>
-            )}
-
-            <button
-              onClick={mergePDFs}
-              disabled={!canMerge}
-              className="mt-6 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium py-3 px-6 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200 cursor-pointer"
-            >
-              {merging ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Merging...
-                </>
-              ) : (
-                <>
-                  <Merge className="w-4 h-4" />
-                  Merge Selected Pages
-                </>
-              )}
-            </button>
-          </>
-        ) : (
-          <div className="text-center py-4">
-            <div className="inline-flex items-center justify-center bg-green-100 p-4 rounded-full mb-4">
-              <Download className="w-8 h-8 text-green-600" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
-              Merge Complete
-            </h2>
-            <p className="text-gray-500 text-sm mb-6">
-              Your merged PDF is ready to download.
+        <div className="grid sm:grid-cols-[1fr_auto_1fr] gap-4 items-start">
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              First PDF
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href={mergedUrl}
-                download="merged.pdf"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium py-3 px-6 rounded-xl hover:shadow-lg hover:shadow-indigo-200 transition-all"
-              >
-                <Download className="w-4 h-4" />
-                Download Merged PDF
-              </a>
-              <button
-                onClick={reset}
-                className="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-700 font-medium py-3 px-6 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
-              >
-                Merge More Files
-              </button>
+            {file1 ? (
+              <>
+                <FileCard file={file1} pageCount={pageCount1} onRemove={removeFile1} />
+                {pageCount1 && (
+                  <PageSelector
+                    totalPages={pageCount1}
+                    selectedPages={selectedPages1}
+                    onChange={setSelectedPages1}
+                  />
+                )}
+              </>
+            ) : (
+              <DropZone
+                label="Select first PDF"
+                onFilesSelected={setFile1}
+              />
+            )}
+          </div>
+
+          <div className="hidden sm:flex items-center justify-center pt-10">
+            <div className="bg-gray-100 p-2 rounded-full">
+              <ArrowRight className="w-4 h-4 text-gray-400" />
             </div>
           </div>
+
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              Second PDF
+            </p>
+            {file2 ? (
+              <>
+                <FileCard file={file2} pageCount={pageCount2} onRemove={removeFile2} />
+                {pageCount2 && (
+                  <PageSelector
+                    totalPages={pageCount2}
+                    selectedPages={selectedPages2}
+                    onChange={setSelectedPages2}
+                  />
+                )}
+              </>
+            ) : (
+              <DropZone
+                label="Select second PDF"
+                onFilesSelected={setFile2}
+              />
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <div className="mt-4 bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl">
+            {error}
+          </div>
         )}
+
+        <button
+          onClick={mergePDFs}
+          disabled={!canMerge}
+          className="mt-6 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium py-3 px-6 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200 cursor-pointer"
+        >
+          {merging ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Merging...
+            </>
+          ) : (
+            <>
+              <Merge className="w-4 h-4" />
+              Merge Selected Pages
+            </>
+          )}
+        </button>
       </div>
+
+      {mergedUrl && (
+        <MergeCompleteModal mergedUrl={mergedUrl} onClose={reset} />
+      )}
 
       {/* Footer info */}
       <div className="mt-8 grid grid-cols-3 gap-4 text-center">
