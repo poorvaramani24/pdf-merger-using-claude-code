@@ -51,27 +51,6 @@ export default function About() {
         ))}
       </div>
 
-      <div className="mt-10 bg-white border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">
-          How It Works
-        </h2>
-        <ol className="space-y-3 text-sm text-gray-600">
-          {[
-            'Select or drag-and-drop your first PDF file.',
-            'Select or drag-and-drop your second PDF file.',
-            'Click "Merge PDFs" to combine them.',
-            'Download your merged document instantly.',
-          ].map((step, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <span className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                {i + 1}
-              </span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </div>
-
       <p className="text-center text-xs text-gray-400 mt-10">
         Built with React, Tailwind CSS &amp; pdf-lib
       </p>
